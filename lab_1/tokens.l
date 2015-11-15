@@ -11,7 +11,6 @@ QUALIFIER "attribute"|"uniform"|"varying"|"const"|"public"|"private"|"scratch"
 KEYWORD "sqrt"|"dot"|"class"|"inverse"|"inside"|"perpendicular"|"dominantAxis"|"trace"|"hit"|"luminance"|"rand"|"pow"|"min"|"max"|"illuminance"|"ambient"|"break"|"case"|"const"|"continue"|"default"|"do"|"double"|"else"|"enum"|"extern"|"for"|"goto"|"if"|"sizeof"|"static"|"struct"|"switch"|"typedef"|"union"|"unsigned"|"void"|"while"
 STATE "rt_ScreenCoord"|"rt_LensCoord"|"rt_Epsilon"|"rt_HitDistance"|"rt_BoundMin"|"rt_BoundMax"|"rt_TextureUV"|"rt_TextureUVW"|"rt_TextureColor"|"rt_FloatTextureValue"|"rt_dsdu"|"rt_dtdu"|"rt_dsdv"|"rt_dtdv"|"rt_RayOrigin"|"rt_RayDirection"|"rt_InverseRayDirection"|"rt_dPdu"|"rt_dPdv"|"rt_LightDistance"|"rt_LightColor"|"rt_EmissionColor"|"rt_BSDFSeed"|"rt_PDF"|"rt_SampleColor"|"rt_BSDFValue"|"rt_du"|"rt_dv"|"rt_HitPoint"|"rt_GeometricNormal"|"rt_ShadingNormal"|"rt_LightDirection"|"rt_TimeSeed"
 %{
-int tokenCount=0;
 int lineCounter=1;
 %}
 
@@ -60,7 +59,7 @@ int lineCounter=1;
 
 "."[a-zA-Z][a-zA-Z0-9]* { printf("SWIZZLE %s\n", yytext+1); }
 [a-zA-Z][a-zA-Z0-9]* { printf("IDENTIFIER %s\n", yytext); }
-
+. {printf("ERROR(%d): Unrecognized symbol \"%s\"\n",lineCounter,yytext);}
 
 
 %%
