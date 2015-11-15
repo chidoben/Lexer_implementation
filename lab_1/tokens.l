@@ -2,72 +2,70 @@
 %option noyywrap
 %x MULTILINECOMMENT
 DIGIT [0-9]
+FLOAT ("-"|"+")?{DIGIT}*"."{DIGIT}*
+INTEGER ("-"|"+")?{DIGIT}+
+EXP ({FLOAT}|{INTEGER})E{DIGIT}+
 
-
+TYPE "void"|"int"|"float"|"bool"|"vec2"|"vec3"|"vec4"|"ivec2"|"ivec3"|"ivec4"|"bvec2"|"bvec3"|"bvec4"|"rt_Primitive"|"rt_Camera"|"rt_Material"|"rt_Texture"|"rt_Light"
+QUALIFIER "attribute"|"uniform"|"varying"|"const"|"public"|"private"|"scratch"
+KEYWORD "sqrt"|"dot"|"class"|"inverse"|"inside"|"perpendicular"|"dominantAxis"|"trace"|"hit"|"luminance"|"rand"|"pow"|"min"|"max"|"illuminance"|"ambient"|"break"|"case"|"const"|"continue"|"default"|"do"|"double"|"else"|"enum"|"extern"|"for"|"goto"|"if"|"sizeof"|"static"|"struct"|"switch"|"typedef"|"union"|"unsigned"|"void"|"while"
+STATE "rt_ScreenCoord"|"rt_LensCoord"|"rt_Epsilon"|"rt_HitDistance"|"rt_BoundMin"|"rt_BoundMax"|"rt_TextureUV"|"rt_TextureUVW"|"rt_TextureColor"|"rt_FloatTextureValue"|"rt_dsdu"|"rt_dtdu"|"rt_dsdv"|"rt_dtdv"|"rt_RayOrigin"|"rt_RayDirection"|"rt_InverseRayDirection"|"rt_dPdu"|"rt_dPdv"|"rt_LightDistance"|"rt_LightColor"|"rt_EmissionColor"|"rt_BSDFSeed"|"rt_PDF"|"rt_SampleColor"|"rt_BSDFValue"|"rt_du"|"rt_dv"|"rt_HitPoint"|"rt_GeometricNormal"|"rt_ShadingNormal"|"rt_LightDirection"|"rt_TimeSeed"
 %{
 int tokenCount=0;
 int lineCounter=1;
 %}
-letter [a-zA-Z]
-digit [0-9]
-DEFTYPES ["int""float""bool"]
-VECTYPES i?"vec"[234]
-BITYPES ["Primitive""Camera""Material""Texture""Light"]
+
 %%
 "/*" {BEGIN(MULTILINECOMMENT);}
 <MULTILINECOMMENT>[^*\n]* 
 <MULTILINECOMMENT>"*"+[^*/\n]* 
 <MULTILINECOMMENT>\n {lineCounter++;}
 <MULTILINECOMMENT>"*"+"/" {BEGIN(INITIAL);}
-
 "//".*"\n" {lineCounter++;}
+\n {lineCounter++;}
+" "* {}
 
-int { printf("TYPE");}
-float { printf("TYPE");}
-bool { printf("TYPE");}
-void { printf("TYPE");}
-i?"vec"[234] { printf("TYPE");}
-rt_Primitive { printf("TYPE");}
-rt_Camera { printf("TYPE");}
-rt_Material { printf("TYPE");}
-rt_Texture { printf("TYPE");}
-rt_Light { printf("TYPE");}
+{TYPE} {printf("TYPE %s\n",yytext);}
+{STATE} {printf("STATE %s\n",yytext);}
+{QUALIFIER} {printf("QUALIFIER %s\n",yytext);}
+{KEYWORD} {printf("KEYWORD %s\n",yytext);}
 
-attribute { printf("QUALIFIER");}
-uniform { printf("QUALIFIER");}
-varying { printf("QUALIFIER");}
-const { printf("QUALIFIER");}
-public { printf("QUALIFIER");}
-private { printf("QUALIFIER");}
-scratch { printf("QUALIFIER");}
-
-"rt_"({letter}|{digit})+ { printf("STATE");}
-
-{letter}({letter}|{digit})* { printf(IDENTIFIER);}
-[+-]"."{digit}*	{ printf( "FLOAT"; }
-[+-]{digit}+"."{digit}*	{ printf( "FLOAT"; }
-"."{digit}*	{ printf( "FLOAT"; }
-{digit}+"."{digit}*	{ printf( "FLOAT"; }
-
-: { printf(COLON);}
-; { printf(SEMICOLON);}
+{FLOAT} {printf("FLOAT %s\n",yytext);}
+{INTEGER} {printf("INTEGER %s\n",yytext);}
+{EXP} {printf("EXP %s\n",yytext);}
+":" {printf("COLON\n");}
+";" {printf("SEMICOLON\n");}
+"+" {printf("PLUS\n");}
+"*" {printf("MUL\n");}
+"-" {printf("MINUS\n");}
+"/" {printf("DIV\n");}
+"=" {printf("ASSIGN\n");}
+"==" {printf("EQUAL\n");}
+"!=" {printf("NOT_EQUAL\n");}
+"<" {printf("LT\n");}
+"<=" {printf("LE\n");}
+">" {printf("GT\n");}
+">=" {printf("GE\n");}
+"," {printf("COMMA\n");}
+"(" {printf("LPARENTHESIS\n");}
+")" {printf("RPARENTHESIS\n");}
+"[" {printf("LBRACKET\n");}
+"]" {printf("RBRACKET\n");}
+"{" {printf("LBRACE\n");}
+"}" {printf("RBRACE\n");}
+"&&" {printf("AND\n");}
+"||" {printf("OR\n");}
+"++" {printf("INC\n");}
+"--" {printf("DEC\n");}
 
 "."[a-zA-Z][a-zA-Z0-9]* { printf("SWIZZLE %s\n", yytext+1); }
 [a-zA-Z][a-zA-Z0-9]* { printf("IDENTIFIER %s\n", yytext); }
 
-\n {lineCounter++;}
-" "* {}
 
 
 %%
-/*
-[ \t]
-[0-9]+    { printf("%d NUMBER \"%s\"\n", ++tokenCount, yytext); }
-[a-zA-Z]+ { printf("%d WORD \"%s\"\n", ++tokenCount, yytext); }
-*/
-
 int main() {
   yylex();
-  printf("%d\n",lineCounter);
+  //printf("%d\n",lineCounter);
   return 0;
 }
