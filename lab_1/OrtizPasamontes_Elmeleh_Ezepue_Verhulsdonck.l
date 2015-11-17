@@ -1,4 +1,4 @@
-/* Code to classify tokens  */ 
+/* Enrique Ortiz Pasamontes 376637, Ahmed Ezzat Mohamed Hefny Elmeleh 377483, Chidozie Benjamin Ezepue 376612, Tijmen Lodewijk Verhulsdonck 376822*/
 %option noyywrap
 %x MULTILINECOMMENT
 DIGIT [0-9]
