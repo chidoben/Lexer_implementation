@@ -1,2 +1,4 @@
 # Temp files
 *~
+*.sublime-workspace
+*.sublime-project

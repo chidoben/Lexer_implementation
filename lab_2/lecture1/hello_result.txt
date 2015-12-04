@@ -1,0 +1,12 @@
+got HELLO token
+parsed a hello node !
+Hello, user !
+got HELLO token
+parsed a hello node !
+Hello, user !
+got HELLO token
+parsed a hello node !
+Hello, user !
+got QUIT token
+parsed a quit node !
+Goodbye, user !
