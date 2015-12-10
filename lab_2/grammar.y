@@ -18,8 +18,8 @@ SHADER_DEF:
 | CLASS IDENTIFIER COLON TEXTURE SEMICOLON { printf("SHADER_DEF texture\n");}
 ;
 
-FUNCTION_DEF
-	: declaration_specifiers direct_declarator LPARENTHESIS declaration_list RPARENTHESIS compound_statement
+FUNCTION_DEF: 
+	type_specifier IDENTIFIER LPARENTHESIS declaration_list RPARENTHESIS compound_statement
 	; 
 
 
@@ -44,13 +44,19 @@ type_specifier
 	| LIGHT
 	;
 
-declaration_list:
-	| direct_declarator declaration_list
+declaration_list
+	:
+	| last_declerator
+	| direct_declarator last_declerator
+
 	;
 
-direct_declarator
-	: IDENTIFIER
-	| LPARENTHESIS direct_declarator RPARENTHESIS
+last_declerator:
+type_specifier IDENTIFIER ;
+
+direct_declarator: 
+	  last_declerator COMMA
+	| direct_declarator
 	;
 
 compound_statement
