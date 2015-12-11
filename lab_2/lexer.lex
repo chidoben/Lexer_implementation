@@ -6,12 +6,10 @@ FLOAT ("-"|"+")?{DIGIT}*"."{DIGIT}*
 INTEGER ("-"|"+")?{DIGIT}+
 EXP ({FLOAT}|{INTEGER})E{DIGIT}+
 
-STATE "rt_ScreenCoord"|"rt_LensCoord"|"rt_Epsilon"|"rt_HitDistance"|"rt_BoundMin"|"rt_BoundMax"|"rt_TextureUV"|"rt_TextureUVW"|"rt_TextureColor"|"rt_FloatTextureValue"|"rt_dsdu"|"rt_dtdu"|"rt_dsdv"|"rt_dtdv"|"rt_RayOrigin"|"rt_RayDirection"|"rt_InverseRayDirection"|"rt_dPdu"|"rt_dPdv"|"rt_LightDistance"|"rt_LightColor"|"rt_EmissionColor"|"rt_BSDFSeed"|"rt_PDF"|"rt_SampleColor"|"rt_BSDFValue"|"rt_du"|"rt_dv"|"rt_HitPoint"|"rt_GeometricNormal"|"rt_ShadingNormal"|"rt_LightDirection"|"rt_TimeSeed"
-
 QUALIFIER "attribute"|"uniform"|"varying"|"public"|"private"|"scratch"
 
 %{
-#include "test0.yy.h"
+#include "grammar.yy.h"
 int lineCounter=1;
 %}
 
@@ -44,8 +42,47 @@ int lineCounter=1;
 "rt_Texture" {return TEXTURE;}
 "rt_Light" {return LIGHT;}
 
-{STATE} {printf("STATE %s\n",yytext);}
-{QUALIFIER} {printf("QUALIFIER %s\n",yytext);}
+"rt_ScreenCoord" {return RT_SCREENCOORD;}
+"rt_LensCoord" {return RT_LENSCOORD;}
+"rt_Epsilon" {return RT_EPSILON;}
+"rt_HitDistance" {return RT_HITDISTANCE;}
+"rt_BoundMin" {return RT_BOUNDMIN;}
+"rt_BoundMax" {return RT_BOUNDMAX;}
+"rt_TextureUV" {return RT_TEXTUREUV;}
+"rt_TextureUVW" {return RT_TEXTUREUVW;}
+"rt_TextureColor" {return RT_TEXTURECOLOR;}
+"rt_FloatTextureValue" {return RT_FLOATTEXTUREVALUE;}
+"rt_dsdu" {return RT_DSDU;}
+"rt_dtdu" {return RT_DTDU;}
+"rt_dsdv" {return RT_DSDV;}
+"rt_dtdv" {return RT_DTDV;}
+"rt_RayOrigin" {return RT_RAYORIGIN;}
+"rt_RayDirection" {return RT_RAYDIRECTION;}
+"rt_InverseRayDirection" {return RT_INVERSERAYDIRECTION;}
+"rt_dPdu" {return RT_DPDU;}
+"rt_dPdv" {return RT_DPDV;}
+"rt_LightDistance" {return RT_LIGHTDISTANCE;}
+"rt_LightColor" {return RT_LIGHTCOLOR;}
+"rt_EmissionColor" {return RT_EMISSIONCOLOR;}
+"rt_BSDFSeed" {return RT_BSDFSEED;}
+"rt_PDF" {return RT_PDF;}
+"rt_SampleColor" {return RT_SAMPLECOLOR;}
+"rt_BSDFValue" {return RT_BSDFVALUE;}
+"rt_du" {return RT_DU;}
+"rt_dv" {return RT_DV;}
+"rt_HitPoint" {return RT_HITPOINT;}
+"rt_GeometricNormal" {return RT_GEOMETRICNORMAL;}
+"rt_ShadingNormal" {return RT_SHADINGNORMAL;}
+"rt_LightDirection" {return RT_LIGHTDIRECTION;}
+"rt_TimeSeed" {return RT_TIMESEED;}
+
+"attribute" {return ATTRIBUTE;}
+"uniform" {return UNIFORM;}
+"varying" {return VARYING;}
+"public" {return PUBLIC;}
+"private" {return PRIVATE;}
+"scratch" {return SCRATCH;}
+
 
 "sqrt" {return SQRT;}
 "dot" {return DOT;}
