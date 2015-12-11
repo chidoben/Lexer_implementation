@@ -2,119 +2,160 @@
 # include <stdio.h>
 %}
 
+%union {
+  int int_token;
+}
+
 /* declare tokens */
-%token  INT FLT BOOL VEC2 VEC3 VEC4 IVEC2 IVEC3 IVEC4 BVEC2 BVEC3 BVEC4 PRIMITIVE CAMERA MATERIAL TEXTURE LIGHT
-%token FLOAT INTEGER EXPONENTIAL
-%token IDENTIFIER
-%token SEMICOLON COLON
-%token NEWLINE 
-%token PLUS MUL MINUS DIV ASSIGN EQUAL NOT_EQUAL LT LE GT GE COMMA LPARENTHESIS RPARENTHESIS LBRACKET RBRACKET LBRACE RBRACE AND OR INC DEC
-%token SQRT DOT CLASS INVERSE INSIDE PERPENDICULAR DOMINANTAXIS TRACE HIT LUMINANCE RAND POW MIN MAX ILLUMINANCE AMBIENT BREAK CASE CONST CONTINUE DEFAULT DO DOUBLE ELSE ENUM EXTERN FOR GOTO IF SIZEOF STATIC STRUCT SWITCH TYPEDEF UNION UNSIGNED VOID WHILE
+%token <int_token>  INT FLT BOOL VEC2 VEC3 VEC4 IVEC2 IVEC3 IVEC4 BVEC2 BVEC3 BVEC4 PRIMITIVE CAMERA MATERIAL TEXTURE LIGHT
+%token <int_token>  FLOAT INTEGER EXPONENTIAL VOID
+%token <int_token>  IDENTIFIER
+%token <int_token>  SEMICOLON COLON RBRACE STATE QUALIFIER COLOR
+%token  <int_token>  NEWLINE SWIZZLE OTHER
+%token <int_token>  PLUS MUL MINUS DIV ASSIGN EQUAL NOT_EQUAL LT LE GT GE COMMA LPARENTHESIS RPARENTHESIS LBRACKET RBRACKET LBRACE  AND OR INC DEC
+%token <int_token> SQRT DOT CLASS INVERSE INSIDE PERPENDICULAR DOMINANTAXIS TRACE HIT LUMINANCE RAND POW MIN MAX ILLUMINANCE AMBIENT BREAK CASE CONST CONTINUE DEFAULT DO DOUBLE ELSE ENUM EXTERN FOR GOTO IF SIZEOF STATIC STRUCT SWITCH TYPEDEF UNION UNSIGNED  WHILE
+
+// indicate which of the below nodes is the root of the parse tree
+%start root_node
 
 %%
-
-SHADER_DEF:
-| CLASS IDENTIFIER COLON MATERIAL SEMICOLON { printf("SHADER_DEF material\n");}
-| CLASS IDENTIFIER COLON TEXTURE SEMICOLON { printf("SHADER_DEF texture\n");}
-;
-
-FUNCTION_DEF: 
-	type_specifier IDENTIFIER LPARENTHESIS declaration_list RPARENTHESIS compound_statement
-	; 
+root_node	
+	: external_declaration
+	| root_node external_declaration
+	;
 
 
-type_specifier
+external_declaration
+	: FUNCTION_DEF
+	| DECLARATION
+	| SHADER_DEF
+	;
+	
+DECLARATION
+	: declaration_specifiers SEMICOLON
+	| declaration_specifiers init_declarator_list SEMICOLON
+	;
+
+	
+	init_declarator
+	: declarator ASSIGN INTEGER SEMICOLON
+	| declarator ASSIGN FLOAT SEMICOLON
+	| declarator ASSIGN EXPONENTIAL SEMICOLON
+	| declarator
+	;
+
+	init_declarator_list
+	: init_declarator
+	| init_declarator_list COMMA init_declarator
+	;
+
+	
+	type_specifier
 	: VOID
 	| INT
 	| FLT
 	| BOOL
-	| VEC2
-	| VEC3
-	| VEC4
-	| IVEC2
-	| IVEC3
-	| IVEC4
-	| BVEC2
-	| BVEC3
-	| BVEC4
-	| PRIMITIVE
-	| CAMERA
-	| MATERIAL
-	| TEXTURE
-	| LIGHT
+	;
+	
+	declaration_list
+	: DECLARATION
+	| declaration_list DECLARATION
+	;
+	
+	declarator
+	: IDENTIFIER
+	| LPARENTHESIS declarator RPARENTHESIS
+	| declarator LPARENTHESIS RPARENTHESIS
+	| declarator LPARENTHESIS identifier_list RPARENTHESIS
+	| declarator LPARENTHESIS parameter_list RPARENTHESIS
+	;
+	
+	identifier_list
+	: IDENTIFIER
+	| identifier_list COMMA IDENTIFIER
+	;
+	
+	declaration_specifiers
+	: type_specifier declaration_specifiers
+	| type_specifier
+	;
+	
+parameter_list
+	: parameter_declaration
+	| parameter_list COMMA parameter_declaration
+	;
+	
+	compound_statement
+	: LBRACE RBRACE
+	| LBRACE  block_item_list RBRACE
+	;
+	
+	statement
+	: labeled_statement
+	| compound_statement
+	| expression_statement
+	| selection_statement
+	;
+	
+	expression_statement
+	: SEMICOLON
+	| expression SEMICOLON
+	;
+	
+	expression
+	: assignment_expression
+	| expression COMMA assignment_expression
+	;
+	
+	assignment_expression
+	: IDENTIFIER ASSIGN INTEGER unary_operator INTEGER SEMICOLON
+	;
+	
+	unary_operator
+	: PLUS
+	| MINUS
+	;
+	
+	labeled_statement
+	: IDENTIFIER COLON statement
 	;
 
-declaration_list
-	:
-	| last_declerator
-	| direct_declarator last_declerator
-
+selection_statement
+	: IF LPARENTHESIS expression RPARENTHESIS statement ELSE statement
+	| IF LPARENTHESIS expression RPARENTHESIS statement
+	| SWITCH LPARENTHESIS expression RPARENTHESIS statement
 	;
-
-last_declerator:
-type_specifier IDENTIFIER ;
-
-direct_declarator: 
-	  last_declerator COMMA
-	| direct_declarator
-	;
-
-compound_statement
-	: LPARENTHESIS RPARENTHESIS
-	| LPARENTHESIS  block_item_list RPARENTHESIS
-	;
-
-block_item_list
+	
+	block_item_list
 	: block_item
 	| block_item_list block_item
 	;
 
 block_item
-	: declaration
+	: DECLARATION
 	| statement
 	;
-
-declaration
-	: declaration_specifiers SEMICOLON
-	| declaration_specifiers init_declarator_list SEMICOLON
+parameter_declaration
+	: declaration_specifiers declarator
+	| declaration_specifiers
 	;
 
-declaration_specifiers
-	: type_specifier
-	| type_specifier declaration_specifiers
+FUNCTION_DEF
+	: declaration_specifiers declarator declaration_list compound_statement
+	| declaration_specifiers declarator compound_statement
 	;
 
-init_declarator_list
-	: init_declarator
-	| init_declarator_list COMMA init_declarator
-	;
 
-init_declarator
-	: direct_declarator ASSIGN primary_expression
-	| direct_declarator
-	;
+SHADER_DEF
+: CLASS IDENTIFIER COLON MATERIAL SEMICOLON { printf("SHADER_DEF material\n");}
+| CLASS IDENTIFIER COLON TEXTURE SEMICOLON { printf("SHADER_DEF texture\n");}
+;
 
-primary_expression
-	: IDENTIFIER
-	| number
-	;
-
-number
-	: FLOAT
-	| INTEGER
-	| EXPONENTIAL
-	;
 %%
 
-int main( int argc, char **argv )
+int main()
 {
-
-  // we assume that the input file is given as input as first argument
-  ++argv, --argc;   
-  if ( argc > 0 )
-    stdin = fopen( argv[0], "r" );
   yyparse();
-  return 0;
 }
 
 yyerror(char *s)
