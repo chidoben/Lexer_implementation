@@ -68,7 +68,7 @@ storage_class_specifier: TYPEDEF	/* identifiers must be flagged as TYPEDEF_NAME 
 	               | EXTERN
 	               | STATIC
 	               ;
-
+	               
 type_specifier: VOID 
 	      | INT
 	      | FLT 
