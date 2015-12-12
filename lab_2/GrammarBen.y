@@ -37,6 +37,7 @@ SHADER_DEF: CLASS IDENTIFIER COLON MATERIAL SEMICOLON { printf("SHADER_DEF mater
           | CLASS IDENTIFIER COLON TEXTURE SEMICOLON { printf("SHADER_DEF texture\n");}
           | CLASS IDENTIFIER COLON CAMERA SEMICOLON { printf("SHADER_DEF camera\n");}
           ;
+          
 /**************************/
 declaration_specifiers: storage_class_specifier declaration_specifiers
 	              | storage_class_specifier
