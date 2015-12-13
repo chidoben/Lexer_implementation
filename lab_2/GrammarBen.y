@@ -1,10 +1,9 @@
-
 %{
 # include <stdio.h>
 %}
 
 /* declare tokens */
-%token  INT FLT BOOL VEC2 VEC3 VEC4 IVEC2 IVEC3 IVEC4 BVEC2 BVEC3 BVEC4 PRIMITIVE CAMERA MATERIAL TEXTURE LIGHT 
+%token  INT FLT BOOL VEC2 VEC3 VEC4 IVEC2 IVEC3 IVEC4 BVEC2 BVEC3 BVEC4 PRIMITIVE CAMERA MATERIAL TEXTURE LIGHT RETURN
 %token QUALIFIER
 %token FLOAT INTEGER EXPONENTIAL
 %token IDENTIFIER
@@ -28,6 +27,21 @@ external_declaration: function_definition
 function_definition: declaration_specifiers declarator declaration_list compound_statement  { printf("FUNCTION_DEF\n");}
 	           | declaration_specifiers declarator compound_statement { printf("FUNCTION_DEF\n");}
 	           ;
+/*function_definition:  type_specifier IDENTIFIER LPARENTHESIS params RPARENTHESIS compound_statement { printf("FUNCTION_DEF\n");}
+                   ;
+params : param_list 
+       | VOID
+       ;
+
+param_list : param_list COMMA param
+           | param 
+           ;
+
+param : type_specifier IDENTIFIER
+      | type_specifier IDENTIFIER LBRACKET RBRACKET
+      ;*/
+
+/********************/
 
 declaration: declaration_specifiers SEMICOLON { printf("DECLARATION\n");}
 	   | declaration_specifiers init_declarator_list SEMICOLON { printf("DECLARATION\n");}
@@ -37,7 +51,6 @@ SHADER_DEF: CLASS IDENTIFIER COLON MATERIAL SEMICOLON { printf("SHADER_DEF mater
           | CLASS IDENTIFIER COLON TEXTURE SEMICOLON { printf("SHADER_DEF texture\n");}
           | CLASS IDENTIFIER COLON CAMERA SEMICOLON { printf("SHADER_DEF camera\n");}
           ;
-          
 /**************************/
 declaration_specifiers: storage_class_specifier declaration_specifiers
 	              | storage_class_specifier
@@ -55,8 +68,8 @@ declaration_list: declaration
 	        | declaration_list declaration
 	        ;
 
-compound_statement: LPARENTHESIS RPARENTHESIS
-	          | LPARENTHESIS  block_item_list RPARENTHESIS
+compound_statement: LBRACE RBRACE
+	          | LBRACE  block_item_list RBRACE
 	          ;
 
 init_declarator_list: init_declarator
@@ -68,7 +81,7 @@ storage_class_specifier: TYPEDEF	/* identifiers must be flagged as TYPEDEF_NAME 
 	               | EXTERN
 	               | STATIC
 	               ;
-	               
+
 type_specifier: VOID 
 	      | INT
 	      | FLT 
@@ -242,8 +255,8 @@ iteration_statement: WHILE LPARENTHESIS expression RPARENTHESIS statement
 jump_statement: GOTO IDENTIFIER SEMICOLON
 	      | CONTINUE SEMICOLON
 	      | BREAK SEMICOLON
-	      | "return" SEMICOLON
-	      | "return" expression SEMICOLON
+	      | RETURN SEMICOLON
+	      | RETURN expression SEMICOLON
 	      ;
 
 designation: designator_list ASSIGN
