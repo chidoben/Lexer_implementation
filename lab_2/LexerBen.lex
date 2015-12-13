@@ -44,7 +44,7 @@ int lineCounter=1;
 "rt_Texture" {return TEXTURE;}
 "rt_Light" {return LIGHT;}
 "return"    {return RETURN;}
-"color"  {return COLOR;}
+
 
 {STATE} { return IDENTIFIER;
           printf("STATE %s\n",yytext);}
