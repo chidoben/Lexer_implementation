@@ -44,6 +44,7 @@ int lineCounter=1;
 "rt_Texture" {return TEXTURE;}
 "rt_Light" {return LIGHT;}
 "return"    {return RETURN;}
+"color"  {return COLOR;}
 
 {STATE} { return IDENTIFIER;
           printf("STATE %s\n",yytext);}
@@ -115,6 +116,14 @@ int lineCounter=1;
 "||" {return OR;}
 "++" {return INC;}
 "--" {return DEC;}
+"+=" { return ADD_ASSIGN; }
+"-=" { return SUB_ASSIGN; }
+"*=" { return MUL_ASSIGN; }
+"/=" { return DIV_ASSIGN; }
+"%=" { return MOD_ASSIGN; }
+"&=" { return AND_ASSIGN; }
+"^=" { return XOR_ASSIGN; }
+"|=" { return OR_ASSIGN; }
 
 "."[a-zA-Z][a-zA-Z0-9]* { printf("SWIZZLE %s\n", yytext+1); }
 [a-zA-Z][a-zA-Z0-9_]* { return IDENTIFIER;}
