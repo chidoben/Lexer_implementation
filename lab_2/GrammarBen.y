@@ -3,13 +3,14 @@
 %}
 
 /* declare tokens */
-%token  INT FLT BOOL VEC2 VEC3 VEC4 IVEC2 IVEC3 IVEC4 BVEC2 BVEC3 BVEC4 PRIMITIVE CAMERA MATERIAL TEXTURE LIGHT RETURN
+%token  INT FLT BOOL VEC2 VEC3 VEC4 IVEC2 IVEC3 IVEC4 BVEC2 BVEC3 BVEC4 PRIMITIVE CAMERA MATERIAL TEXTURE LIGHT RETURN COLOR
 %token QUALIFIER
 %token FLOAT INTEGER EXPONENTIAL
 %token IDENTIFIER
 %token SEMICOLON COLON
 %token NEWLINE 
 %token PLUS MUL MINUS DIV ASSIGN EQUAL NOT_EQUAL LT LE GT GE COMMA LPARENTHESIS RPARENTHESIS LBRACKET RBRACKET LBRACE RBRACE AND OR INC DEC
+%token MUL_ASSIGN   DIV_ASSIGN  MOD_ASSIGN  ADD_ASSIGN SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN  XOR_ASSIGN  OR_ASSIGN        
 %token SQRT DOT CLASS INVERSE INSIDE PERPENDICULAR DOMINANTAXIS TRACE HIT LUMINANCE RAND POW MIN MAX ILLUMINANCE AMBIENT BREAK CASE CONST CONTINUE DEFAULT DO DOUBLE ELSE ENUM EXTERN FOR GOTO IF SIZEOF STATIC STRUCT SWITCH TYPEDEF UNION UNSIGNED VOID WHILE
 
 %start translation_unit
@@ -100,6 +101,7 @@ type_specifier: VOID
 	      | MATERIAL
 	      | TEXTURE
 	      | LIGHT
+              | COLOR
 	     ;
 
 
@@ -126,7 +128,7 @@ block_item_list: block_item
 	       | block_item_list block_item
 	       ;
 
-init_declarator: declarator '=' initializer
+init_declarator: declarator ASSIGN initializer
 	       | declarator
 	       ;
 
@@ -160,7 +162,7 @@ parameter_type_list: parameter_list
 	           ;
 /**************************/
 conditional_expression: logical_or_expression
-	              | logical_or_expression '?' expression ':' conditional_expression
+	              | logical_or_expression '?' expression COLON conditional_expression
 	              ;
 
 unary_expression: postfix_expression
@@ -168,10 +170,20 @@ unary_expression: postfix_expression
 	        | DEC unary_expression
 	        | unary_operator cast_expression
 	        | SIZEOF unary_expression
-	        | SIZEOF '(' type_name ')'
+	        | SIZEOF LPARENTHESIS type_name RPARENTHESIS
 	        ;
 
 assignment_operator: ASSIGN
+                    | MUL_ASSIGN
+	            | DIV_ASSIGN
+	            | MOD_ASSIGN
+	            | ADD_ASSIGN
+	            | SUB_ASSIGN
+	            | LEFT_ASSIGN
+	            | RIGHT_ASSIGN
+	            | AND_ASSIGN
+	            | XOR_ASSIGN
+	            | OR_ASSIGN
 	           ;
 
 parameter_declaration: declaration_specifiers declarator
@@ -224,15 +236,15 @@ unary_operator: '&'
 	      ;
 
 cast_expression: unary_expression
-	       | '(' type_name ')' cast_expression
+	       | LPARENTHESIS type_name RPARENTHESIS cast_expression
 	       ;
 
 abstract_declarator: direct_abstract_declarator
 	           ;
 
-labeled_statement: IDENTIFIER ':' statement
-	         | CASE constant_expression ':' statement
-	         | DEFAULT ':' statement
+labeled_statement: IDENTIFIER COLON statement
+	         | CASE constant_expression COLON statement
+	         | DEFAULT COLON statement
 	         ; 
 
 expression_statement: SEMICOLON
