@@ -47,8 +47,7 @@ int lineCounter=1;
 "return"    {return RETURN;}
 
 
-{STATE} { return IDENTIFIER;
-          printf("STATE %s\n",yytext);}
+{STATE} { setFlag(yytext); return IDENTIFIER;}
 {QUALIFIER} {return QUALIFIER;
              printf("QUALIFIER %s\n",yytext);}
 

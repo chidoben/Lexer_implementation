@@ -9,6 +9,9 @@ int shaderTexture = 0;
 int methodCamera = 0;
 int methodMaterial = 0;
 int methodTexture = 0;
+
+//Flags to stateAccess
+int textureAccess = 0;
 %}
 
 /* declare tokens */
@@ -391,6 +394,8 @@ void flagCheck()
 			yyerror("material cannot have an interface method of camera");
 		if(methodTexture)
 			yyerror("material cannot have an interface method of texture");
+		if(textureAccess)
+			yyerror("Material cannot access to a state of texture");
 	}
 
 	if(shaderCamera)
@@ -399,6 +404,8 @@ void flagCheck()
 			yyerror("camera cannot have an interface method of material");
 		if(methodTexture)
 			yyerror("camera cannot have an interface method of texture");
+		if(textureAccess)
+			yyerror("camera cannot access to a state of texture");
 	}
 
 	if(shaderTexture)
@@ -408,6 +415,8 @@ void flagCheck()
 		if(methodCamera)
 			yyerror("texture cannot have an interface method of camera");
 	}
+
+
 }
 
 void setFlag(char *s)
@@ -416,7 +425,12 @@ void setFlag(char *s)
 		methodMaterial=1; //shade is an interface method of material
 
 	if(strcmp(s, "generateRay")==0)
-		methodCamera=1; //shade is an interface method of material
+		methodCamera=1; //generateRay is an interface method of camera
+
+	if(strcmp(s, "rt_TextureUVW")==0)
+		textureAccess=1; //rt_TextureUVW belongs to texture shader
+
+
 }
 
 int main( int argc, char **argv )
