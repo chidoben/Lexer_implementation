@@ -3,7 +3,7 @@
 %}
 
 /* declare tokens */
-%token  INT FLT BOOL VEC2 VEC3 VEC4 IVEC2 IVEC3 IVEC4 BVEC2 BVEC3 BVEC4 PRIMITIVE CAMERA MATERIAL TEXTURE LIGHT RETURN 
+%token COLOR INT FLT BOOL VEC2 VEC3 VEC4 IVEC2 IVEC3 IVEC4 BVEC2 BVEC3 BVEC4 PRIMITIVE CAMERA MATERIAL TEXTURE LIGHT RETURN 
 %token QUALIFIER
 %token FLOAT INTEGER EXPONENTIAL
 %token IDENTIFIER
@@ -11,8 +11,8 @@
 %token NEWLINE 
 %token PLUS MUL MINUS DIV ASSIGN EQUAL NOT_EQUAL LT LE GT GE COMMA LPARENTHESIS RPARENTHESIS LBRACKET RBRACKET LBRACE RBRACE AND OR INC DEC
 %token MUL_ASSIGN   DIV_ASSIGN  MOD_ASSIGN  ADD_ASSIGN SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN  XOR_ASSIGN  OR_ASSIGN        
-%token SQRT DOT CLASS INVERSE INSIDE PERPENDICULAR DOMINANTAXIS TRACE HIT LUMINANCE RAND POW MIN MAX ILLUMINANCE AMBIENT BREAK CASE CONST CONTINUE DEFAULT DO DOUBLE ELSE ENUM EXTERN FOR GOTO IF SIZEOF STATIC STRUCT SWITCH TYPEDEF UNION UNSIGNED VOID WHILE
-
+%token CLASS INVERSE PERPENDICULAR DOMINANTAXIS HIT LUMINANCE RAND MIN MAX ILLUMINANCE AMBIENT BREAK CASE CONST CONTINUE DEFAULT DO DOUBLE ELSE ENUM EXTERN FOR GOTO IF SIZEOF STATIC STRUCT SWITCH TYPEDEF UNION UNSIGNED VOID WHILE
+//%token INSIDE POW DOT SQRT TRACE
 %start translation_unit
 %%
 
@@ -28,19 +28,6 @@ external_declaration: function_definition
 function_definition: declaration_specifiers declarator declaration_list compound_statement  { printf("FUNCTION_DEF\n");}
 	           | declaration_specifiers declarator compound_statement { printf("FUNCTION_DEF\n");}
 	           ;
-/*function_definition:  type_specifier IDENTIFIER LPARENTHESIS params RPARENTHESIS compound_statement { printf("FUNCTION_DEF\n");}
-                   ;
-params : param_list 
-       | VOID
-       ;
-
-param_list : param_list COMMA param
-           | param 
-           ;
-
-param : type_specifier IDENTIFIER
-      | type_specifier IDENTIFIER LBRACKET RBRACKET
-      ;*/
 
 /********************/
 
@@ -83,7 +70,8 @@ storage_class_specifier: TYPEDEF	/* identifiers must be flagged as TYPEDEF_NAME 
 	               | STATIC
 	               ;
 
-type_specifier: VOID 
+type_specifier: VOID
+		  | COLOR
 	      | INT
 	      | FLT 
 	      | BOOL
@@ -203,9 +191,7 @@ initializer_list: designation initializer
 	        | initializer_list COMMA designation initializer
 	        | initializer_list COMMA initializer
 	        ;
-parameter_list: parameter_declaration
-	      | parameter_list COMMA parameter_declaration
-	      ;
+
 /**************************/
 logical_or_expression: logical_and_expression
 	             | logical_or_expression OR logical_and_expression
@@ -216,10 +202,11 @@ expression: assignment_expression
 	  ;
 
 postfix_expression: primary_expression
+			  | COLOR LPARENTHESIS argument_expression_list RPARENTHESIS
 	          | postfix_expression LBRACKET expression RBRACKET
 	          | postfix_expression LPARENTHESIS RPARENTHESIS
 	          | postfix_expression LPARENTHESIS argument_expression_list RPARENTHESIS
-	          | postfix_expression '.' IDENTIFIER
+	          | postfix_expression '.' IDENTIFIER  //looks like swizzle
 	          | postfix_expression INC
 	          | postfix_expression DEC
 	          | LPARENTHESIS type_name RPARENTHESIS LBRACE initializer_list RBRACE
@@ -272,10 +259,6 @@ jump_statement: GOTO IDENTIFIER SEMICOLON
 
 designation: designator_list ASSIGN
 	   ;
-parameter_declaration: declaration_specifiers declarator
-	             | declaration_specifiers abstract_declarator
-	             | declaration_specifiers
-	             ;
 
 type_name: specifier_qualifier_list abstract_declarator
 	| specifier_qualifier_list
@@ -288,7 +271,7 @@ logical_and_expression: inclusive_or_expression
 
 primary_expression: IDENTIFIER
 	          | constant
-	          | string
+	          //| string
 	          | LPARENTHESIS expression RPARENTHESIS
 	          ;
 
@@ -351,7 +334,7 @@ constant: FLOAT
          | INTEGER
          | EXPONENTIAL
          ;
-string: IDENTIFIER
+/*string: IDENTIFIER
        ;
 /*string: STRING_LITERAL
       ;*/

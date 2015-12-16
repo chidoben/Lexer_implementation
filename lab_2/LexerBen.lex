@@ -11,7 +11,7 @@ STATE "rt_ScreenCoord"|"rt_LensCoord"|"rt_Epsilon"|"rt_HitDistance"|"rt_BoundMin
 QUALIFIER "attribute"|"uniform"|"varying"|"public"|"private"|"scratch"
 
 %{
-#include "grammar.yy.h"
+#include "GrammarBen.yy.h"
 int lineCounter=1;
 %}
 
@@ -25,6 +25,7 @@ int lineCounter=1;
 \n {lineCounter++;}
 " "* {}
 
+"color" {return COLOR;}
 "void" {return VOID;}
 "int" {return INT;}
 "float" {return FLT;}
@@ -51,18 +52,13 @@ int lineCounter=1;
 {QUALIFIER} {return QUALIFIER;
              printf("QUALIFIER %s\n",yytext);}
 
-"sqrt" {return SQRT;}
-"dot" {return DOT;}
 "class" {return CLASS;}
 "inverse" {return INVERSE;}
-"inside" {return INSIDE;}
 "perpendicular" {return PERPENDICULAR;}
 "dominantAxis" {return DOMINANTAXIS;}
-"trace" {return TRACE;}
 "hit" {return HIT;}
 "luminance" {return LUMINANCE;}
 "rand" {return RAND;}
-"pow" {return POW;}
 "min" {return MIN;}
 "max" {return MAX;}
 "illuminance" {return ILLUMINANCE;}
