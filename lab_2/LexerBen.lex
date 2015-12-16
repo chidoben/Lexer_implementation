@@ -122,14 +122,11 @@ int lineCounter=1;
 
 "."[a-zA-Z][a-zA-Z0-9]* {return (SWIZZLE); printf("SWIZZLE %s\n", yytext+1); }
 [a-zA-Z][a-zA-Z0-9_]* {setFlag(yytext); return IDENTIFIER;}
-. {printf("ERROR(%d): Unrecognized symbol \"%s\"\n",lineCounter,yytext);}
+. {
+	if ((int)*yytext != 13)
+		printf("ERROR(%d): Unrecognized symbol \"%s\"\n",lineCounter,yytext);
+	}
 
 
 %%
 
-/*int main() {
-  yylex();
-  //printf("%d\n",lineCounter);
-  return 0;
-}
-*/

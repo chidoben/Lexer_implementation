@@ -447,5 +447,5 @@ int main( int argc, char **argv )
 
 yyerror(char *s)
 {
-  fprintf(stderr, "error: %s\n", s);
+  fprintf(stderr, "Error: %s\n", s);
 }
