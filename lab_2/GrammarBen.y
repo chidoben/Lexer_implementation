@@ -1,5 +1,14 @@
 %{
 # include <stdio.h>
+//Flags of what shader has been declared
+int shaderCamera = 0;
+int shaderMaterial = 0;
+int shaderTexture = 0;
+
+//Flags regarding what tipe of interface methods have been used
+int methodCamera = 0;
+int methodMaterial = 0;
+int methodTexture = 0;
 %}
 
 /* declare tokens */
@@ -35,9 +44,9 @@ declaration: declaration_specifiers SEMICOLON { printf("DECLARATION\n");}
 	   | declaration_specifiers init_declarator_list SEMICOLON { printf("DECLARATION\n");}
 	   ;
 
-SHADER_DEF: CLASS IDENTIFIER COLON MATERIAL SEMICOLON { printf("SHADER_DEF material\n");}
-          | CLASS IDENTIFIER COLON TEXTURE SEMICOLON { printf("SHADER_DEF texture\n");}
-          | CLASS IDENTIFIER COLON CAMERA SEMICOLON { printf("SHADER_DEF camera\n"); fprintf (stderr, "Error: camera cannot have an interface method of material\n");}
+SHADER_DEF: CLASS IDENTIFIER COLON MATERIAL SEMICOLON { printf("SHADER_DEF material\n"); shaderMaterial=1;}
+          | CLASS IDENTIFIER COLON TEXTURE SEMICOLON { printf("SHADER_DEF texture\n"); shaderTexture=1;}
+          | CLASS IDENTIFIER COLON CAMERA SEMICOLON { printf("SHADER_DEF camera\n"); shaderCamera=1;}
           ;
 /**************************/
 declaration_specifiers: storage_class_specifier declaration_specifiers
@@ -374,6 +383,42 @@ multiplicative_expression: cast_expression
 	                 | multiplicative_expression DIV cast_expression
 	                 ;
 %%
+void flagCheck()
+{
+	if(shaderMaterial)
+	{
+		if(methodCamera)
+			yyerror("material cannot have an interface method of camera");
+		if(methodTexture)
+			yyerror("material cannot have an interface method of texture");
+	}
+
+	if(shaderCamera)
+	{
+		if(methodMaterial)
+			yyerror("camera cannot have an interface method of material");
+		if(methodTexture)
+			yyerror("camera cannot have an interface method of texture");
+	}
+
+	if(shaderTexture)
+	{
+		if(methodMaterial)
+			yyerror("texture cannot have an interface method of material");
+		if(methodCamera)
+			yyerror("texture cannot have an interface method of camera");
+	}
+}
+
+void setFlag(char *s)
+{
+	if(strcmp(s, "shade")==0)
+		methodMaterial=1; //shade is an interface method of material
+
+	if(strcmp(s, "generateRay")==0)
+		methodCamera=1; //shade is an interface method of material
+}
+
 int main( int argc, char **argv )
 {
   // we assume that the input file is given as input as first argument
@@ -381,8 +426,11 @@ int main( int argc, char **argv )
   if ( argc > 0 )
     stdin = fopen( argv[0], "r" );
   yyparse();
+  flagCheck();
+
   return 0;
 }
+
 yyerror(char *s)
 {
   fprintf(stderr, "error: %s\n", s);
