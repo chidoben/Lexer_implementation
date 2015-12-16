@@ -37,6 +37,6 @@ gcc $NAMEBISON.yy.c $NAMEFLEX.c -o $NAMEBISON.out -lfl
 
 if [ ! -z "$3" ]; then
     echo "Running generated code against $3 file."
-    ./$NAMEBISON.out < $3 > "$NAMEBISON""_result.txt"
+    ./$NAMEBISON.out < $3 > "$NAMEBISON""_result.txt" 2>"$NAMEBISON""_error.txt"
     #cat "$NAME""_result.txt"
 fi
