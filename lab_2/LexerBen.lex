@@ -121,7 +121,7 @@ int lineCounter=1;
 "^=" { return XOR_ASSIGN; }
 "|=" { return OR_ASSIGN; }
 
-"."[a-zA-Z][a-zA-Z0-9]* { printf("SWIZZLE %s\n", yytext+1); }
+"."[a-zA-Z][a-zA-Z0-9]* {return (SWIZZLE); printf("SWIZZLE %s\n", yytext+1); }
 [a-zA-Z][a-zA-Z0-9_]* { return IDENTIFIER;}
 . {printf("ERROR(%d): Unrecognized symbol \"%s\"\n",lineCounter,yytext);}
 

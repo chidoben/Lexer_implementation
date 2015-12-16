@@ -6,7 +6,7 @@
 %token COLOR INT FLT BOOL VEC2 VEC3 VEC4 IVEC2 IVEC3 IVEC4 BVEC2 BVEC3 BVEC4 PRIMITIVE CAMERA MATERIAL TEXTURE LIGHT RETURN 
 %token QUALIFIER
 %token FLOAT INTEGER EXPONENTIAL
-%token IDENTIFIER
+%token IDENTIFIER SWIZZLE
 %token SEMICOLON COLON
 %token NEWLINE 
 %token PLUS MUL MINUS DIV ASSIGN EQUAL NOT_EQUAL LT LE GT GE COMMA LPARENTHESIS RPARENTHESIS LBRACKET RBRACKET LBRACE RBRACE AND OR INC DEC
@@ -37,7 +37,7 @@ declaration: declaration_specifiers SEMICOLON { printf("DECLARATION\n");}
 
 SHADER_DEF: CLASS IDENTIFIER COLON MATERIAL SEMICOLON { printf("SHADER_DEF material\n");}
           | CLASS IDENTIFIER COLON TEXTURE SEMICOLON { printf("SHADER_DEF texture\n");}
-          | CLASS IDENTIFIER COLON CAMERA SEMICOLON { printf("SHADER_DEF camera\n");}
+          | CLASS IDENTIFIER COLON CAMERA SEMICOLON { printf("SHADER_DEF camera\n"); fprintf (stderr, "Error: camera cannot have an interface method of material\n");}
           ;
 /**************************/
 declaration_specifiers: storage_class_specifier declaration_specifiers
@@ -206,7 +206,8 @@ postfix_expression: primary_expression
 	          | postfix_expression LBRACKET expression RBRACKET
 	          | postfix_expression LPARENTHESIS RPARENTHESIS
 	          | postfix_expression LPARENTHESIS argument_expression_list RPARENTHESIS
-	          | postfix_expression '.' IDENTIFIER  //looks like swizzle
+	          //| postfix_expression '.' IDENTIFIER  //looks like swizzle
+	          | postfix_expression SWIZZLE
 	          | postfix_expression INC
 	          | postfix_expression DEC
 	          | LPARENTHESIS type_name RPARENTHESIS LBRACE initializer_list RBRACE
