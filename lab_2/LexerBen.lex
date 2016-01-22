@@ -13,6 +13,8 @@ QUALIFIER "attribute"|"uniform"|"varying"|"public"|"private"|"scratch"
 %{
 #include "GrammarBen.yy.h"
 int lineCounter=1;
+#define ECHO
+//#define ECHO printf("[%s]\n", yytext)
 %}
 
 %%
@@ -24,104 +26,102 @@ int lineCounter=1;
 "//".*"\n" {lineCounter++;}
 \n {lineCounter++;}
 " "* {}
+"color" {ECHO; return COLOR;}
+"void" {ECHO; return VOID;}
+"int" {ECHO;return INT;}
+"float" {ECHO; return FLT;}
+"bool" {ECHO; return BOOL;}
+"vec2" {ECHO; return VEC2;}
+"vec3" {ECHO; return VEC3;}
+"vec4" {ECHO; return VEC4;}
+"ivec2" {ECHO;return IVEC2;}
+"ivec3" {ECHO;return IVEC3;}
+"ivec4" {ECHO;return IVEC4;}
+"bvec2" {ECHO;return BVEC2;}
+"bvec3" {ECHO;return BVEC3;}
+"bvec4" {ECHO;return BVEC4;}
+"rt_Primitive" {ECHO;return PRIMITIVE;}
+"rt_Camera" {ECHO;return CAMERA;}
+"rt_Material" {ECHO;return MATERIAL;}
+"rt_Texture" {ECHO;return TEXTURE;}
+"rt_Light" {ECHO;return LIGHT;}
+"return"    {ECHO;return RETURN;}
 
-"color" {return COLOR;}
-"void" {return VOID;}
-"int" {return INT;}
-"float" {return FLT;}
-"bool" {return BOOL;}
-"vec2" {return VEC2;}
-"vec3" {return VEC3;}
-"vec4" {return VEC4;}
-"ivec2" {return IVEC2;}
-"ivec3" {return IVEC3;}
-"ivec4" {return IVEC4;}
-"bvec2" {return BVEC2;}
-"bvec3" {return BVEC3;}
-"bvec4" {return BVEC4;}
-"rt_Primitive" {return PRIMITIVE;}
-"rt_Camera" {return CAMERA;}
-"rt_Material" {return MATERIAL;}
-"rt_Texture" {return TEXTURE;}
-"rt_Light" {return LIGHT;}
-"return"    {return RETURN;}
 
-
-{STATE} { setFlag(yytext); return IDENTIFIER;}
-{QUALIFIER} {return QUALIFIER;
+{STATE} { setFlag(yytext); ECHO; return IDENTIFIER;}
+{QUALIFIER} {ECHO; return QUALIFIER;
              printf("QUALIFIER %s\n",yytext);}
 
-"class" {return CLASS;}
-"inverse" {return INVERSE;}
-"perpendicular" {return PERPENDICULAR;}
-"dominantAxis" {return DOMINANTAXIS;}
-"hit" {return HIT;}
-"luminance" {return LUMINANCE;}
-"rand" {return RAND;}
-"min" {return MIN;}
-"max" {return MAX;}
-"illuminance" {return ILLUMINANCE;}
-"ambient" {return AMBIENT;}
-"break" {return BREAK;}
-"case" {return CASE;}
-"const" {return CONST;}
-"continue" {return CONTINUE;}
-"default" {return DEFAULT;}
-"do" {return DO;}
-"double" {return DOUBLE;}
-"else" {return ELSE;}
-"enum" {return ENUM;}
-"extern" {return EXTERN;}
-"for" {return FOR;}
-"goto" {return GOTO;}
-"if" {return IF;}
-"sizeof" {return SIZEOF;}
-"static" {return STATIC;}
-"struct" {return STRUCT;}
-"switch" {return SWITCH;}
-"typedef" {return TYPEDEF;}
-"union" {return UNION;}
-"unsigned" {return UNSIGNED;}
-"while" {return WHILE;}
+"class" {ECHO; return CLASS;}
+"inverse" {ECHO; return INVERSE;}
+"perpendicular" {ECHO; return PERPENDICULAR;}
+"dominantAxis" {ECHO; return DOMINANTAXIS;}
+"luminance" {ECHO; return LUMINANCE;}
+"rand" {ECHO; return RAND;}
+"min" {ECHO; return MIN;}
+"max" {ECHO; return MAX;}
+"illuminance" {ECHO; return ILLUMINANCE;}
+"ambient" {ECHO; return AMBIENT;}
+"break" {ECHO; return BREAK;}
+"case" {ECHO; return CASE;}
+"const" {ECHO; return CONST;}
+"continue" {ECHO; return CONTINUE;}
+"default" {ECHO; return DEFAULT;}
+"do" {ECHO; return DO;}
+"double" {ECHO; return DOUBLE;}
+"else" {ECHO; return ELSE;}
+"enum" {ECHO; return ENUM;}
+"extern" {ECHO; return EXTERN;}
+"for" {ECHO; return FOR;}
+"goto" {ECHO; return GOTO;}
+"if" {ECHO; return IF;}
+"sizeof" {ECHO; return SIZEOF;}
+"static" {ECHO; return STATIC;}
+"struct" {ECHO; return STRUCT;}
+"switch" {ECHO; return SWITCH;}
+"typedef" {ECHO; return TYPEDEF;}
+"union" {ECHO; return UNION;}
+"unsigned" {ECHO; return UNSIGNED;}
+"while" {ECHO; return WHILE;}
 
-{FLOAT} {return FLOAT;}
-{INTEGER} {return INTEGER;}
-{EXP} {return EXPONENTIAL;}
-":" {return COLON;}
-";" {return SEMICOLON;}
-"+" {return PLUS;}
-"*" {return MUL;}
-"-" {return MINUS;}
-"/" {return DIV;}
-"=" {return ASSIGN;}
-"==" {return EQUAL;}
-"!=" {return NOT_EQUAL;}
-"<" {return LT;}
-"<=" {return LE;}
-">" {return GT;}
-">=" {return GE;}
-"," {return COMMA;}
-"(" {return LPARENTHESIS;}
-")" {return RPARENTHESIS;}
-"[" {return LBRACKET;}
-"]" {return RBRACKET;}
-"{" {return LBRACE;}
-"}" {return RBRACE;}
-"&&" {return AND;}
-"||" {return OR;}
-"++" {return INC;}
-"--" {return DEC;}
-"+=" { return ADD_ASSIGN; }
-"-=" { return SUB_ASSIGN; }
-"*=" { return MUL_ASSIGN; }
-"/=" { return DIV_ASSIGN; }
-"%=" { return MOD_ASSIGN; }
-"&=" { return AND_ASSIGN; }
-"^=" { return XOR_ASSIGN; }
-"|=" { return OR_ASSIGN; }
+{FLOAT} {ECHO; return FLOAT;}
+{INTEGER} {ECHO; return INTEGER;}
+{EXP} {ECHO; return EXPONENTIAL;}
+":" {ECHO; return COLON;}
+";" {ECHO; return SEMICOLON;}
+"+" {ECHO; return PLUS;}
+"*" {ECHO; return MUL;}
+"-" {ECHO; return MINUS;}
+"/" {ECHO; return DIV;}
+"=" {ECHO; return ASSIGN;}
+"==" {ECHO; return EQUAL;}
+"!=" {ECHO; return NOT_EQUAL;}
+"<" {ECHO; return LT;}
+"<=" {ECHO; return LE;}
+">" {ECHO; return GT;}
+">=" {ECHO; return GE;}
+"," {ECHO; return COMMA;}
+"(" {ECHO; return LPARENTHESIS;}
+")" {ECHO; return RPARENTHESIS;}
+"[" {ECHO; return LBRACKET;}
+"]" {ECHO; return RBRACKET;}
+"{" {ECHO; return LBRACE;}
+"}" {ECHO; return RBRACE;}
+"&&" {ECHO; return AND;}
+"||" {ECHO; return OR;}
+"++" {ECHO; return INC;}
+"--" {ECHO; return DEC;}
+"+=" { ECHO; return ADD_ASSIGN; }
+"-=" { ECHO; return SUB_ASSIGN; }
+"*=" { ECHO; return MUL_ASSIGN; }
+"/=" { ECHO; return DIV_ASSIGN; }
+"%=" { ECHO; return MOD_ASSIGN; }
+"&=" { ECHO; return AND_ASSIGN; }
+"^=" { ECHO; return XOR_ASSIGN; }
+"|=" { ECHO; return OR_ASSIGN; }
 
-"."[a-zA-Z][a-zA-Z0-9]* {return (SWIZZLE); printf("SWIZZLE %s\n", yytext+1); }
-[a-zA-Z][a-zA-Z0-9_]* {setFlag(yytext); return IDENTIFIER;}
+"."[a-zA-Z][a-zA-Z0-9]* {ECHO; return (SWIZZLE); }
+[a-zA-Z][a-zA-Z0-9_]* {setFlag(yytext); ECHO; return IDENTIFIER;}
 . {
 	if ((int)*yytext != 13)
 		printf("ERROR(%d): Unrecognized symbol \"%s\"\n",lineCounter,yytext);
@@ -129,4 +129,3 @@ int lineCounter=1;
 
 
 %%
-

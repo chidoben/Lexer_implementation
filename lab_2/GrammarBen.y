@@ -4,7 +4,7 @@
 int shaderCamera = 0;
 int shaderMaterial = 0;
 int shaderTexture = 0;
-
+int shaderPrimitive = 0;
 //Flags regarding what tipe of interface methods have been used
 int methodCamera = 0;
 int methodMaterial = 0;
@@ -24,7 +24,7 @@ int textureAccess = 0;
 %token PLUS MUL MINUS DIV ASSIGN EQUAL NOT_EQUAL LT LE GT GE COMMA LPARENTHESIS RPARENTHESIS LBRACKET RBRACKET LBRACE RBRACE AND OR INC DEC
 %token MUL_ASSIGN   DIV_ASSIGN  MOD_ASSIGN  ADD_ASSIGN SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN  XOR_ASSIGN  OR_ASSIGN        
 %token CLASS INVERSE PERPENDICULAR DOMINANTAXIS HIT LUMINANCE RAND MIN MAX ILLUMINANCE AMBIENT BREAK CASE CONST CONTINUE DEFAULT DO DOUBLE ELSE ENUM EXTERN FOR GOTO IF SIZEOF STATIC STRUCT SWITCH TYPEDEF UNION UNSIGNED VOID WHILE
-//%token INSIDE POW DOT SQRT TRACE
+%token INSIDE POW DOT SQRT TRACE
 %start translation_unit
 %%
 
@@ -50,6 +50,7 @@ declaration: declaration_specifiers SEMICOLON { printf("DECLARATION\n");}
 SHADER_DEF: CLASS IDENTIFIER COLON MATERIAL SEMICOLON { printf("SHADER_DEF material\n"); shaderMaterial=1;}
           | CLASS IDENTIFIER COLON TEXTURE SEMICOLON { printf("SHADER_DEF texture\n"); shaderTexture=1;}
           | CLASS IDENTIFIER COLON CAMERA SEMICOLON { printf("SHADER_DEF camera\n"); shaderCamera=1;}
+          | CLASS IDENTIFIER COLON PRIMITIVE SEMICOLON { printf("SHADER_DEF primitive\n"); shaderPrimitive=1;}
           ;
 /**************************/
 declaration_specifiers: storage_class_specifier declaration_specifiers
@@ -215,6 +216,9 @@ expression: assignment_expression
 
 postfix_expression: primary_expression
 			  | COLOR LPARENTHESIS argument_expression_list RPARENTHESIS
+			  | VEC3 LPARENTHESIS argument_expression_list RPARENTHESIS
+			  | HIT LPARENTHESIS argument_expression_list RPARENTHESIS
+			  | DOT LPARENTHESIS argument_expression_list RPARENTHESIS
 	          | postfix_expression LBRACKET expression RBRACKET
 	          | postfix_expression LPARENTHESIS RPARENTHESIS
 	          | postfix_expression LPARENTHESIS argument_expression_list RPARENTHESIS
@@ -416,7 +420,10 @@ void flagCheck()
 			yyerror("texture cannot have an interface method of camera");
 	}
 
+	if(shaderPrimitive)
+	{
 
+	}
 }
 
 void setFlag(char *s)
