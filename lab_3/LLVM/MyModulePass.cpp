@@ -32,8 +32,9 @@ class MyModulePass : public ModulePass {
   }
 
   virtual bool runOnModule(Module& m) {
-    cerr << "Module " << m.getModuleIdentifier() << endl;
+    cerr << "Module identifier is: " << m.getModuleIdentifier() << " hahaha" << endl;
     for (Module::iterator mi = m.begin(), me = m.end(); mi != me; ++mi) {
+      cout << "is going to run in function: ";
       runOnFunction(*mi);
     }
     return false;
