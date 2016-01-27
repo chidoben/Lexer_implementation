@@ -1,19 +1,18 @@
 	/* Name Surname */
 
-	// STL 
+	// STL
 	#include <map>
 	#include <vector>
 	#include <utility>
 
-	// LLVM 
+	// LLVM
 	#include <llvm/Pass.h>
 	#include <llvm/IR/LLVMContext.h>
 	#include <llvm/IR/Function.h>
-	#include <llvm/IR/Instruction.h>
 	#include <llvm/IR/Instructions.h>
-	#include "llvm/Support/CFG.h"
+	#include "llvm/Analysis/CFG.h"
 	#include <llvm/Support/raw_ostream.h>
-	#include <llvm/Support/InstIterator.h>
+	#include <llvm/IR/InstIterator.h>
 	#include <llvm/IR/Constants.h>
 
 	using namespace llvm;
@@ -27,7 +26,7 @@
 		   bool isInitialized;
 		   bool isNotified;
 		};
-		static const bool verbose = false;
+		static const bool verbose = true;
 
 		static char ID;
 		DefinitionPass() : FunctionPass(ID) {}
@@ -40,19 +39,22 @@
         	std::map <std::string, VarInfo> varInitMap;
 	        for(BasicBlock &b : F.getBasicBlockList()){ //for each block found in function
 	            for (BasicBlock::iterator ii = b.begin(), ie = b.end(); ii != ie; ++ii) {  //Iterate over the instructions of each block
-      				
       				if (AllocaInst *ai = dyn_cast<AllocaInst>(&*ii)) { //If instruction is an allocation
       					if(ai->hasName()) //And it has a name
       					{
       						VarInfo newvar;
-      						varInitMap[ai->getName().str()] = newvar;
       						newvar.isInitialized = false;
       						newvar.isNotified = false;
+									varInitMap[ai->getName().str()] = newvar;
       						if(verbose)
-      							errs() << ai->getName()<< " declared\n";//TODO
+      							errs() << ai->getName()<< " alocated\n";//TODO
       					}
 					}
-					
+					if (CallInst *ci = dyn_cast<CallInst>(&*ii)) {
+						//Do something with call intrustion
+							errs()<< ci->getCalledFunction()->getName()<<" function\n";
+
+					}
 					if (StoreInst *si = dyn_cast<StoreInst>(&*ii)) {
 						//errs() << "StoreInst: " << si->getNumOperands()<< "\n";
 						if (si->getOperand(1)->hasName())
@@ -62,7 +64,7 @@
 								errs() << si->getOperand(1)->getName()<< " initialized\n";
 						}
 					}
-					
+
 					if (LoadInst *li = dyn_cast<LoadInst>(&*ii)) {
 						//errs() << "Load Instruction: " << li->getOperand(0)->getName() << " Is initialized:  " << varInitMap[li->getOperand(0)->getName().str()]<<"\n";
 						std::string varName = li->getOperand(0)->getName().str();
@@ -118,6 +120,3 @@
 	// Pass registrations
 	static RegisterPass<DefinitionPass> X("def-pass", "Reaching definitions pass");
 	static RegisterPass<FixingPass> Y("fix-pass", "Fixing initialization pass");
-
-
-
