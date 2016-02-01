@@ -117,100 +117,76 @@
 		struct VarInfo {
 		   bool isInitialized;
 		   bool isNotified;
-		   //AllocaInst *Ais;
                    PointerType *Ais;
 		};
-		static const bool verbose = true;
-
+	
 		virtual bool runOnFunction(Function &F){
 			std::map <std::string, VarInfo> varInitMap;
 			for(BasicBlock &b : F.getBasicBlockList()){ //for each block found in function
 					for (BasicBlock::iterator ii = b.begin(), ie = b.end(); ii != ie; ++ii) {  //Iterate over the instructions of each block
-					if (AllocaInst *ai = dyn_cast<AllocaInst>(&*ii)) { //If instruction is an allocation
-						if(ai->hasName()) //And it has a name
-						{
-							VarInfo newvar;
-							newvar.isInitialized = false;
-							newvar.isNotified = false;
-							//newvar.Ais = ai;
-                                          		newvar.Ais = ai->getType();
- 							varInitMap[ai->getName().str()] = newvar;
-							if(verbose)
-								errs() << ai->getName()<< " alocated\n";//TODO
-						}
-			}
-			if (CallInst *ci = dyn_cast<CallInst>(&*ii)) {
-				//Do something with call intrustion
-					errs()<< ci->getCalledFunction()->getName()<<" function\n";
+					          if (AllocaInst *ai = dyn_cast<AllocaInst>(&*ii)) { //If instruction is an allocation
+						         if(ai->hasName()) //And it has a name
+						            {
+							      VarInfo newvar;
+							      newvar.isInitialized = false;
+							      newvar.isNotified = false;
+                                          		      newvar.Ais = ai->getType();
+ 							      varInitMap[ai->getName().str()] = newvar;
+							
+						              }
+			                                }
+			                         if (CallInst *ci = dyn_cast<CallInst>(&*ii)) {
+				                    //Do something with call intrustion
+					            errs()<< ci->getCalledFunction()->getName()<<" function\n";
 
-			}
-			if (StoreInst *si = dyn_cast<StoreInst>(&*ii)) {
-				//errs() << "StoreInst: " << si->getNumOperands()<< "\n";
-				if (si->getOperand(1)->hasName())
-				{
+			                            }
+			                        if (StoreInst *si = dyn_cast<StoreInst>(&*ii)) {
+				                     if (si->getOperand(1)->hasName())
+				                         {
 							varInitMap[si->getOperand(1)->getName().str()].isInitialized = true;
-					if(verbose)
-						errs() << si->getOperand(1)->getName()<< " initialized\n";
-				}
-			}
+				                         }
+			                             }
 
-			if (LoadInst *li = dyn_cast<LoadInst>(&*ii)) {
-				//errs() << "Load Instruction: " << li->getOperand(0)->getName() << " Is initialized:  " << varInitMap[li->getOperand(0)->getName().str()]<<"\n";
-				std::string varName = li->getOperand(0)->getName().str();
-				if (li->getOperand(0)->hasName() && varInitMap[varName].isInitialized == false && varInitMap[varName].isNotified == false)
-				{
-//Tijmen's ideas
-			/*		Value *initval=new Value();
-					if(varInitMap[varName].Ais->getAllocatedType()->isDoubleTy()){
-						initVal = 30.0;
-						StoreInst sis = new StoreInst(20.0, varInitMap[varName].Ais->getPointer(),varInitMap[varName].Ais);
-					} else 	if(varInitMap[varName].Ais->getAllocatedType()->isFloatTy()){
-						StoreInst sis = new StoreInst(10.0, varInitMap[varName].Ais->getPointer(),varInitMap[varName].Ais);
-					}	else if(varInitMap[varName].Ais->getAllocatedType()->isIntegerTy()){
-				}
-					varInitMap[varName].isNotified = true;
-				*/
-//My own ideas. It's not working yet
-				//IntegerType *int_type = Type::getInt64Ty(context);
-                            IntegerType *int_type = IntegerType::get(li->getContext(), 64);
-				if(varInitMap[varName].Ais->getElementType()->isIntegerTy())
-					{
-					   Value *num = ConstantInt::get(int_type, 10, true);
-                                          Value *alloc = new AllocaInst(int_type, "int_addr", &b);
-                                          StoreInst *ptr = new StoreInst(num,alloc,false,&b);
-					}
-				else if(varInitMap[varName].Ais->getElementType()->isDoubleTy())
-					{
-					 Value *num = ConstantInt::get(int_type, 30.0, true);
-                                          Value *alloc = new AllocaInst(int_type, "double_addr", &b);
-                                          StoreInst *ptr = new StoreInst(num,alloc,false,&b);
-					}
-				else if(varInitMap[varName].Ais->getElementType()->isFloatTy())
-				       {
-					  Value *num = ConstantInt::get(int_type, 20.0, true);
-                                          Value *alloc = new AllocaInst(int_type, "float_addr", &b);
-                                          StoreInst *ptr = new StoreInst(num,alloc,false,&b);
-					}
-                                 }
-				varInitMap[varName].isNotified = true;
-			}
-			}
+			                       if (LoadInst *li = dyn_cast<LoadInst>(&*ii)) {
+						 LoadInst* insertbefore = nullptr;
+				
+				                     std::string varName = li->getOperand(0)->getName().str();
+				                      if (li->getOperand(0)->hasName() && varInitMap[varName].isInitialized == false && varInitMap[varName].isNotified == false)
+				                          {
 
-			}
+				                             //IntegerType *int_type = Type::getInt64Ty(context);
+                                                           IntegerType *int_type = IntegerType::get(li->getContext(), 64);
+				                           if(varInitMap[varName].Ais->getElementType()->isIntegerTy())
+					                      {
+					                            Value *num = ConstantInt::get(int_type, 10, true);
+                                                                    Value *alloc = new AllocaInst(int_type, "int_addr", &b);
+                                                                    //StoreInst *ptr = new StoreInst(num,alloc,false,&b);
+									StoreInst *ptr = new StoreInst(num,alloc,false,insertbefore);
+                   							li->getParent()->getInstList().insert(li, ptr);
+					                      }
+				                            else if(varInitMap[varName].Ais->getElementType()->isDoubleTy())
+					                          {
+					                            Value *num = ConstantInt::get(int_type, 30.0, true);
+                                                                    Value *alloc = new AllocaInst(int_type, "double_addr", &b);
+                                                                     //StoreInst *ptr = new StoreInst(num,alloc,false,&b);
+								    StoreInst *ptr = new StoreInst(num,alloc,false,insertbefore);
+									li->getParent()->getInstList().insert(li, ptr);
+					                          }
+				                            else if(varInitMap[varName].Ais->getElementType()->isFloatTy())
+				                                   {
+					                              Value *num = ConstantInt::get(int_type, 20.0, true);
+                                                                      Value *alloc = new AllocaInst(int_type, "float_addr", &b);
+                                                                       // StoreInst *ptr = new StoreInst(num,alloc,false,&b);
+									StoreInst *ptr = new StoreInst(num,alloc,false,insertbefore);
+                                                       			li->getParent()->getInstList().insert(li, ptr);
+					                           }
+                                                            }
+				                          varInitMap[varName].isNotified = true;
+			                          }
+			                }
 
-			//Print all maps values
-			if(verbose)
-			{
-		errs() << "new Block:\n";
-		std::map<std::string, VarInfo>::iterator variablesMapIterator = varInitMap.begin();
-		while (variablesMapIterator!=varInitMap.end())
-		{
-			errs()<<"Iterator: " << variablesMapIterator->first << "\n";
-			errs()<<"    isInitialized: " << variablesMapIterator->second.isInitialized << "\n";
-			errs()<<"    isNotified: " << variablesMapIterator->second.isNotified << "\n";
-			variablesMapIterator++;
-		}
-	}
+			               }
+
 	            errs() << "fix-pass\n";
 		    return true;
 		}
