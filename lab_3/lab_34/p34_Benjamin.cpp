@@ -171,28 +171,28 @@
 					varInitMap[varName].isNotified = true;
 				*/
 //My own ideas. It's not working yet
-				/*IntegerType *int_type = Type::getInt64Ty(context);
-                            
+				//IntegerType *int_type = Type::getInt64Ty(context);
+                            IntegerType *int_type = IntegerType::get(li->getContext(), 64);
 				if(varInitMap[varName].Ais->getElementType()->isIntegerTy())
 					{
 					   Value *num = ConstantInt::get(int_type, 10, true);
-                                          Value *alloc = new AllocaInst(int_type, "int_addr", b);
-                                          StoreInst *ptr = new StoreInst(num,alloc,false,li);
+                                          Value *alloc = new AllocaInst(int_type, "int_addr", &b);
+                                          StoreInst *ptr = new StoreInst(num,alloc,false,&b);
 					}
 				else if(varInitMap[varName].Ais->getElementType()->isDoubleTy())
 					{
 					 Value *num = ConstantInt::get(int_type, 30.0, true);
-                                          Value *alloc = new AllocaInst(int_type, "double_addr", b);
-                                          StoreInst *ptr = new StoreInst(num,alloc,false,li);
+                                          Value *alloc = new AllocaInst(int_type, "double_addr", &b);
+                                          StoreInst *ptr = new StoreInst(num,alloc,false,&b);
 					}
 				else if(varInitMap[varName].Ais->getElementType()->isFloatTy())
 				       {
 					  Value *num = ConstantInt::get(int_type, 20.0, true);
-                                          Value *alloc = new AllocaInst(int_type, "float_addr", b);
-                                          StoreInst *ptr = new StoreInst(num,alloc,false,li);
+                                          Value *alloc = new AllocaInst(int_type, "float_addr", &b);
+                                          StoreInst *ptr = new StoreInst(num,alloc,false,&b);
 					}
                                  }
-				varInitMap[varName].isNotified = true;*/
+				varInitMap[varName].isNotified = true;
 			}
 			}
 
