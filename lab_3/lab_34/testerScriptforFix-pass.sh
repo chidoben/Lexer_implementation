@@ -24,6 +24,7 @@ do
 	if [ $? -eq 0 ]
 	then
 			printf ${GREEN}
+	        echo "$result"
 	        echo 'Correct result for test'$i
 	        printf "${NC}\n\n"
 	else
