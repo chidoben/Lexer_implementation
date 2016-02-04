@@ -34,3 +34,27 @@ do
 	        printf "${NC}\n\n"
 	fi
 done
+
+for i in {1..5}
+do
+	echo '---------Executing test'$i 'def-pass------------'
+	command='opt -load ./p34.so -def-pass test"$i".bc -o test"$i"_def.bc 2> test"$i"Answer.def' # create correct bitcode
+	eval $command
+
+	file1=$(sort test"$i"Answer.def > test"$i"Answer.def.sorted)
+	file1=$(sort test"$i".def > test"$i".def.sorted)
+	result=$(diff -y test"$i"Answer.def.sorted test"$i".def.sorted) #compare outputs
+
+	if [ $? -eq 0 ]
+	then
+			printf ${GREEN}
+	        echo "$result"
+	        echo 'Correct result for test'$i
+	        printf "${NC}\n\n"
+	else
+			printf ${RED}
+	        echo 'Incorrect result for test'$i
+	        echo "$result"
+	        printf "${NC}\n\n"
+	fi
+done

@@ -27,7 +27,7 @@
 		   bool isInitialized;
 		   bool isNotified;
 		};
-		static const bool verbose = true;
+		static const bool verbose = false;
 
 		static char ID;
 		DefinitionPass() : FunctionPass(ID) {}
