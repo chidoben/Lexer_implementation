@@ -1,4 +1,4 @@
-    /* Name Surname */
+    /* Tijmen Verhulsdonck 376822, */
 
 // STL 
 #include <map>
